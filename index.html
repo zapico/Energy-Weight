@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ENERGY WEIGHT</title>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.slim.min.js"></script>
+	<link href="https://fonts.googleapis.com/css?family=Rubik" rel="stylesheet">
+	  <script>
+		  var socket = io();
+		  socket.on('kwh', function (msg) {
+			  	$('#kwh').text(msg + " kwh");
+		  })
+	  </script>
+		 <style>
+			 #kwh{
+				 margin-top: 20%;
+				 text-align:center;
+				 font-size:10em;
+				 font-family: 'Rubik', sans-serif;
+			 }
+		 </style>
+</head>
+<body>
+    <div id="kwh">2451 kwh</div>
+</body>
+</html>
