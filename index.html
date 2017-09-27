@@ -5,23 +5,172 @@
     <title>ENERGY WEIGHT</title>
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.slim.min.js"></script>
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<link href="https://fonts.googleapis.com/css?family=Rubik" rel="stylesheet">
 	  <script>
+		  $("#messg").hide();
 		  var socket = io();
 		  socket.on('kwh', function (msg) {
-			  	$('#kwh').text(msg + " kwh");
-		  })
+			  	$('#brukat').text(msg);
+				$( "#kwh" ).html( ($('#available').html() - $('#brukat').html()) + " <small>kwh/år</small>" );
+				var fbk = $('#available').html() - $('#brukat').html();
+				if (fbk < 0) {
+					console.log(fbk);
+					$( "#kwh" ).removeClass("positv").addClass("negatv");
+				} else {
+					$( "#kwh" ).removeClass("negatv").addClass("positv");
+				};
+		  });
+		  socket.on('added', function (msg) {
+			  $("#messg").show();
+       	  	  $('#messg').text("You added: "+ msg );
+			  setTimeout(function() { $("#messg").hide(); }, 6000);
+			  
+		  });
+		  socket.on('removed', function (msg) {
+			  $("#messg").show();
+       	  	  $('#messg').text("You removed: "+ msg );
+			  setTimeout(function() { $("#messg").hide(); }, 6000);
+			  
+		  });
+		  
+		  $( function() {
+		    $( "#slider" ).slider({
+		      range: "max",
+		      min: 1,
+		      max: 50,
+		      value: 20,
+		      slide: function( event, ui ) {
+		        $( "#antal" ).html( ui.value );
+				$( "#available" ).html( ui.value*281);
+				$( "#kwh" ).html( (ui.value*281 - $('#brukat').html()) + " <small>kwh/år</small>" );
+				var fbk = $('#available').html() - $('#brukat').html();
+				if (fbk < 0) {
+					console.log(fbk);
+					$( "#kwh" ).removeClass("positv").addClass("negatv");
+				} else {
+					$( "#kwh" ).removeClass("negatv").addClass("positv");
+				};
+		      }
+		    });
+		  } );
 	  </script>
 		 <style>
+			 html { 
+			   background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ),url(/solarmacro.jpg) no-repeat center center fixed; 
+			   -webkit-background-size: cover;
+			   -moz-background-size: cover;
+			   -o-background-size: cover;
+			   background-size: cover;
+			 }
+
+			 #title{
+				 text-align:left;
+				 font-size:3em;
+				 font-family: 'Rubik', sans-serif;
+				 color: white;
+				 padding:1%;
+				 top:0px;
+			 }
+			 #subtitle{
+				 text-align:left;
+				 width: 35%;
+				 font-size:1.4em;
+				 font-family: 'Rubik', sans-serif;
+				 color: white;
+				 padding:1%;
+				 top:0px;
+			 }
 			 #kwh{
-				 margin-top: 20%;
+				 margin-top: 5%;
 				 text-align:center;
 				 font-size:10em;
 				 font-family: 'Rubik', sans-serif;
 			 }
+			 .positv{
+				 color: white;
+			 }
+			 .negatv{
+				 color: red;
+			 }
+			 #available,  #brukat{
+				 margin-top: 5%;
+				 text-align:center;
+				 font-size:5em;
+				 font-family: 'Rubik', sans-serif;
+				 color: white;
+			 }
+			.smallkwh{
+				 margin-bottom: 5%;
+				 margin-top:-2%;
+			 	text-align:center;
+				 font-size:1.8em;
+				 font-family: 'Rubik', sans-serif;
+				 color: white;
+			 }
+			 #messg{
+				 margin-top: 1%;
+				 text-align:center;
+				 font-size:2em;
+				 font-family: 'Rubik', sans-serif;
+				 color: white;
+			 }
+			 #slider{
+				 width: 250px;
+				 margin-top: 5%;
+				 margin-left:auto;
+				 margin-right:auto;
+				 text-align:center;
+			 }
+			 .box_center{
+				 margin-top:10%;
+				 width:60%;
+				 margin-left:auto;
+				 margin-right:auto;
+			 }
+			 .box_left{
+				 float:left;
+				 width:40%;
+				 margin:1%;
+				 text-align:center;
+			 }
+			 .box_right{
+				 float:right;
+				 width:40%;
+				 margin:1%;
+				 text-align:center;
+			 }
+			 h3, #antal{
+				 font-size:1em;
+				 text-align:center;
+				 font-family: 'Rubik', sans-serif;
+				 color: white;
+				 margin: 0;
+			 }
 		 </style>
 </head>
 <body>
-    <div id="kwh">2451 kwh</div>
+	<div id="title">VAD RÄCKER SOLCELLERNA TILL? (alpha)</div>
+	<div id="subtitle">Välj antal solceller och använd klossarna för att se hur mycket elen skulle räcka på ett år. Observera att detta är en prototyp och datan är inte exakt.</div>
+    <div class="box_center">
+		<div id="kwh" class="positv">2810 <small>kwh/år</small></div>
+		<div id="messg"></div>
+	</div>
+	<div  class="box_center">
+		<div class="box_left">
+			<h3>Produktion:</h3>
+			<div id="available">2810</div><div class="smallkwh">kwh</div>
+			<h3>Antal solceller:</h3>
+			<div id="antal">10</div>
+			<div id="slider"></div>
+		</div>
+		<div class="box_right">
+			<h3>Förbrukning:</h3>
+			<div id="brukat">0</div><div class="smallkwh">kwh</div>
+		</div>
+	</div>
+	
 </body>
 </html>
