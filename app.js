@@ -37,14 +37,14 @@ var data = []
 data[14] = {"name":"1 mil med elcykel","energy":30,"text":""}
 data[22] = {"name":"belsyning","energy":160,"text":""}
 data[33] = {"name":"tvätt","energy":60}
-data[65] = {"name":"IT och underhåll","energy":125,"text":""}
-data[99] = {"name":"kyl & frys","energy":160,"text":""}
+data[64] = {"name":"IT och underhåll","energy":125,"text":""}
+data[98] = {"name":"kyl & frys","energy":160,"text":""}
 data[141] = {"name":"1 mil med elbil","energy":730,"text":""}
 data[155] = {"name":"1 mil med elbil","energy":730,"text":""}
 data[158] = {"name":"1 mil med elbil","energy":730,"text":""}
 data[163] = {"name":"1 mil med elbil","energy":730,"text":""}
-data[283] = {"name":"En lägenhet","energy":6000,"text":""}
-data[374] = {"name":"Ett hus","energy":17000,"text":""}
+data[280] = {"name":"En lägenhet","energy":6000,"text":""}
+data[369] = {"name":"Ett hus","energy":14000,"text":""}
 
 // 1 Initialize energy use
 // A. Example of a house
@@ -52,13 +52,12 @@ data[374] = {"name":"Ett hus","energy":17000,"text":""}
 // C. Enter your own consumption
 var used = 0
 var totalweight = 0
-var control = [0,0];
+var control = [0,0,0];
 var i = 0
 
 // 2. If scale detects changes
 var weight = scale.getWeight(function(weight){
 	if (weight == 0) {
-		console.log("zero!")
 		totalweight = 0
 		used = 0
 		io.emit('kwh', used)
@@ -67,20 +66,13 @@ var weight = scale.getWeight(function(weight){
  	
   if ((weight - totalweight > 8) || (weight - totalweight < -8)){
 	  
-	  if (i!=2){
+	  if (i!=3){
 	  	control[i] = weight
 		  i += 1
+	  } else if (weight == control[0]) {
 		  console.log(control)
-	  } else if (weight = control[1]) {
 		 	// B. Compare with previous value to infer block
   			var diff = weight - totalweight
-  			console.log("total weight")
-   		    console.log(totalweight)
-		    console.log("weight now")
-	        console.log(weight)
-	        console.log("difference" )
-	        console.log(diff)
-			 
 		  	// C. Get block from array with such weight and get its energy value
   			// Id of the block is its weight
 			if (diff < 0) {
@@ -89,41 +81,37 @@ var weight = scale.getWeight(function(weight){
   			  	id = diff
   			 }
 			 j = 0
-			 // Check array with a +-1 to allow for errors 
-			 id += 1
+			 // Check array with a +-3 to allow for errors 
+			 id += 3
 			 
 			 while (typeof data[id] === 'undefined'){
 				j += 1
 				id -= 1
-				if (j == 3){ 
+				if (j == 7){ 
 					break;
 				} // breaks out of loop completely}
-			 }
-			console.log(data[id])
+			 }			
 			 if (typeof data[id] != 'undefined'){
 				 var blockenergy = data[id].energy
 	 			// D. Add or deduct energy value from total
 	 			if (diff > 0) {
 	 				// if the block was added, remove the equivalent saving from energy consumption
 	 			  	used += blockenergy
-	 				io.emit('added', data[id].name)
+	 				io.emit('added', data[id].name, id)
 	 			  } else {
 	 				 // if the block was removed, add back the energy consumption
 	 			  	used -= blockenergy
-	 				io.emit('removed', data[id].name)
+	 				io.emit('removed', data[id].name, id)
 	 			  }
 	 		  	// E. Send changes to UI
 	 		  	io.emit('kwh', used)
-			
 	 			// Reinitialize
 	 			i = 0
 	 			totalweight = weight
+				console.log(totalweight)
 			 }else{
 	 			i = 0
-			 	
 			 }
-
-			  
 		  } else {
 		    i = 0
 	  	  }    

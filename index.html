@@ -13,8 +13,8 @@
 		  $("#messg").hide();
 		  var socket = io();
 		  socket.on('kwh', function (msg) {
-			  	$('#brukat').text(msg);
-				$( "#kwh" ).html( ($('#available').html() - $('#brukat').html()) + " <small>kwh/år</small>" );
+			  	$('#brukat').html(msg);
+				$( "#kwh" ).html( $('#available').html() - $('#brukat').html() );
 				var fbk = $('#available').html() - $('#brukat').html();
 				if (fbk < 0) {
 					console.log(fbk);
@@ -22,18 +22,15 @@
 				} else {
 					$( "#kwh" ).removeClass("negatv").addClass("positv");
 				};
+				if (msg == 0){
+					$('#units').html("");
+				}
 		  });
-		  socket.on('added', function (msg) {
-			  $("#messg").show();
-       	  	  $('#messg').text("You added: "+ msg );
-			  setTimeout(function() { $("#messg").hide(); }, 6000);
-			  
+		  socket.on('added', function (msg,unitid) {
+       	  	  $('#units').append("<div id='unit" + unitid +"' class='unit'>"+ msg + "</div>");		  
 		  });
-		  socket.on('removed', function (msg) {
-			  $("#messg").show();
-       	  	  $('#messg').text("You removed: "+ msg );
-			  setTimeout(function() { $("#messg").hide(); }, 6000);
-			  
+		  socket.on('removed', function (msg,unitid) {
+			  $('#units').find('#unit'+unitid).remove();	  
 		  });
 		  
 		  $( function() {
@@ -45,7 +42,7 @@
 		      slide: function( event, ui ) {
 		        $( "#antal" ).html( ui.value );
 				$( "#available" ).html( ui.value*281);
-				$( "#kwh" ).html( (ui.value*281 - $('#brukat').html()) + " <small>kwh/år</small>" );
+				$( "#kwh" ).html(ui.value*281 - $('#brukat').html());
 				var fbk = $('#available').html() - $('#brukat').html();
 				if (fbk < 0) {
 					console.log(fbk);
@@ -68,7 +65,7 @@
 
 			 #title{
 				 text-align:left;
-				 font-size:3em;
+				 font-size:2em;
 				 font-family: 'Rubik', sans-serif;
 				 color: white;
 				 padding:1%;
@@ -76,17 +73,17 @@
 			 }
 			 #subtitle{
 				 text-align:left;
-				 width: 35%;
-				 font-size:1.4em;
+				 width: 40%;
+				 font-size:1em;
 				 font-family: 'Rubik', sans-serif;
 				 color: white;
 				 padding:1%;
 				 top:0px;
 			 }
-			 #kwh{
-				 margin-top: 5%;
+			 #brukat{
+				 margin-top: 1%;
 				 text-align:center;
-				 font-size:10em;
+				 font-size:7em;
 				 font-family: 'Rubik', sans-serif;
 			 }
 			 .positv{
@@ -95,10 +92,23 @@
 			 .negatv{
 				 color: red;
 			 }
-			 #available,  #brukat{
-				 margin-top: 5%;
+			 .unit{
+				 float:left;
+				 width:15%;
+				 height:40px;
+				 margin-right:10px;
+				 margin-bottom:10px;
 				 text-align:center;
-				 font-size:5em;
+				 font-size:0.8em;
+				 font-family: 'Rubik', sans-serif;
+				 color: white;		
+			 	 padding:1%;
+				 border: solid 2px white;
+			 }
+			 #available,  #kwh{
+				 margin-top: 1%;
+				 text-align:center;
+				 font-size:3em;
 				 font-family: 'Rubik', sans-serif;
 				 color: white;
 			 }
@@ -106,7 +116,7 @@
 				 margin-bottom: 5%;
 				 margin-top:-2%;
 			 	text-align:center;
-				 font-size:1.8em;
+				 font-size:1.6em;
 				 font-family: 'Rubik', sans-serif;
 				 color: white;
 			 }
@@ -125,7 +135,7 @@
 				 text-align:center;
 			 }
 			 .box_center{
-				 margin-top:10%;
+				 margin-top:3%;
 				 width:60%;
 				 margin-left:auto;
 				 margin-right:auto;
@@ -133,14 +143,18 @@
 			 .box_left{
 				 float:left;
 				 width:40%;
-				 margin:1%;
 				 text-align:center;
 			 }
 			 .box_right{
 				 float:right;
 				 width:40%;
-				 margin:1%;
 				 text-align:center;
+			 }
+			 #units{
+				 width:80%;
+				 height:50px;
+				 margin-left:auto;
+				 margin-right:auto;
 			 }
 			 h3, #antal{
 				 font-size:1em;
@@ -153,22 +167,22 @@
 </head>
 <body>
 	<div id="title">VAD RÄCKER SOLCELLERNA TILL? (alpha)</div>
-	<div id="subtitle">Välj antal solceller och använd klossarna för att se hur mycket elen skulle räcka på ett år. Observera att detta är en prototyp och datan är inte exakt.</div>
+	<div id="subtitle">Välj antal solceller och använd klossarna för att se hur mycket elen skulle räcka på ett år. Observera att detta är en prototyp och att siffrorna är inte exakta.</div>
     <div class="box_center">
-		<div id="kwh" class="positv">2810 <small>kwh/år</small></div>
-		<div id="messg"></div>
+		<div id="brukat" class="positv">0</div><div class="smallkwh">kwh/år</div>
+		<div id="units"></div>
 	</div>
-	<div  class="box_center">
+ 	<div  class="box_center">
 		<div class="box_left">
 			<h3>Produktion:</h3>
-			<div id="available">2810</div><div class="smallkwh">kwh</div>
-			<h3>Antal solceller:</h3>
+			<div id="available">2810</div><div class="smallkwh">kwh/år</div>
+			<h3>Antal solpaneler:</h3>
 			<div id="antal">10</div>
 			<div id="slider"></div>
 		</div>
 		<div class="box_right">
-			<h3>Förbrukning:</h3>
-			<div id="brukat">0</div><div class="smallkwh">kwh</div>
+			<h3>Kvar att använda:</h3>
+			<div id="kwh">0</div><div class="smallkwh">kwh/år</div>
 		</div>
 	</div>
 	
