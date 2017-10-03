@@ -44,7 +44,7 @@ data[155] = {"name":"1 mil med elbil","energy":730,"text":""}
 data[158] = {"name":"1 mil med elbil","energy":730,"text":""}
 data[163] = {"name":"1 mil med elbil","energy":730,"text":""}
 data[280] = {"name":"En lägenhet","energy":6000,"text":""}
-data[369] = {"name":"Ett hus","energy":14000,"text":""}
+data[364] = {"name":"Ett hus","energy":14000,"text":""}
 
 // 1 Initialize energy use
 // A. Example of a house
