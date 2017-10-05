@@ -39,12 +39,12 @@ data[22] = {"name":"belsyning","energy":160,"text":""}
 data[33] = {"name":"tvätt","energy":60}
 data[64] = {"name":"IT och underhåll","energy":125,"text":""}
 data[98] = {"name":"kyl & frys","energy":160,"text":""}
-data[141] = {"name":"1 mil med elbil","energy":730,"text":""}
+data[138] = {"name":"1 mil med elbil","energy":730,"text":""}
+data[152] = {"name":"1 mil med elbil","energy":730,"text":""}
 data[155] = {"name":"1 mil med elbil","energy":730,"text":""}
-data[158] = {"name":"1 mil med elbil","energy":730,"text":""}
-data[163] = {"name":"1 mil med elbil","energy":730,"text":""}
-data[280] = {"name":"En lägenhet","energy":6000,"text":""}
-data[364] = {"name":"Ett hus","energy":14000,"text":""}
+data[160] = {"name":"1 mil med elbil","energy":730,"text":""}
+data[276] = {"name":"En lägenhet","energy":6000,"text":""}
+data[361] = {"name":"Ett hus","energy":12000,"text":""}
 
 // 1 Initialize energy use
 // A. Example of a house
